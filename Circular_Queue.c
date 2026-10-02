@@ -1,6 +1,5 @@
-// Linear Queue Implementation in C
+// Implementing Circular Queue in C
 #include <stdio.h>
-#include <stdlib.h>
 #define SIZE 5
 
 struct job {
@@ -8,9 +7,9 @@ struct job {
     char job_title[20];
 };
 
-int front = -1, rear = -1;
-void isEmpty(int front, int rear);
-void isFull(int rear);
+int front = 0, rear = 0;
+int isEmpty(int front, int rear);
+int isFull(int front, int rear);
 void enqueue(struct job Que[SIZE], struct job j);
 void dequeue(struct job Que[SIZE]);
 void display(struct job Que[SIZE], int front, int rear);
@@ -21,7 +20,7 @@ int main() {
     int choice;
 
     while(1) {
-        printf("\nQueue Operations:\n");
+        printf("\nCircular Queue Operations:\n");
         printf("1. Enqueue\n");
         printf("2. Dequeue\n");
         printf("3. Display\n");
@@ -31,8 +30,8 @@ int main() {
 
         switch(choice) {
             case 1:
-                if(rear == SIZE - 1) {
-                    isFull(rear);
+                if(isFull(front, rear)) {
+                    printf("Queue is full. Cannot enqueue.\n");
                 }
                 else {
                     printf("Enter Job ID: ");
@@ -43,8 +42,8 @@ int main() {
                 }
                 break;
             case 2:
-                if (front == -1) {
-                    isEmpty(front, rear);
+                if (isEmpty(front, rear)) {
+                    printf("Queue is empty. Cannot dequeue.\n");
                 }
                 else {
                     dequeue(Que);
@@ -54,71 +53,63 @@ int main() {
                 display(Que, front, rear);
                 break;
             case 4:
-                exit(0);
+                return 0;
             default:
                 printf("Invalid choice! Please try again.\n");
         }
     }
+
     return 0;
 }
 
-void isEmpty(int front, int rear) {
-    if (front == -1 && rear == -1) {
-        printf("Queue is empty.\n");
+int isEmpty(int front, int rear) {
+    if (front == rear) {
+        return 1;
     }
-    else {
-        printf("Queue is not empty.\n");
-    }
+    return 0;
 }
 
-void isFull(int rear) {
-    if (rear == SIZE - 1) {
-        printf("Queue is full.\n");
+int isFull(int front, int rear) {
+    if ((rear + 1) % SIZE == front) {
+        return 1;
     }
-    else {
-        printf("Queue is not full.\n");
-    }
+    return 0;
 }
 
 void enqueue(struct job Que[SIZE], struct job j) {
-    if (rear == SIZE - 1) {
+    if (isFull(front, rear)) {
         printf("Queue is full. Cannot enqueue.\n");
+        return;
     }
     else {
-        if (front == -1) {
-            front = 0;
-        }
-        rear++;
+        rear = (rear + 1) % SIZE;
         Que[rear] = j;
-        printf("Enqueued: Job ID: %d, Job Title: %s\n", j.job_id, j.job_title);
+        printf("Enqueued Job ID: %d, Job Title: %s\n", j.job_id, j.job_title);
     }
 }
 
 void dequeue(struct job Que[SIZE]) {
-    if (front == -1) {
+    if (isEmpty(front, rear)) {
         printf("Queue is empty. Cannot dequeue.\n");
+        return;
     }
     else {
-        struct job j = Que[front];
-        printf("Dequeued: Job ID: %d, Job Title: %s\n", j.job_id, j.job_title);
-        if (front == rear) {
-            front = -1;
-            rear = -1;
-        }
-        else {
-            front++;
-        }
+        front = (front + 1) % SIZE;
+        printf("Dequeued Job ID: %d, Job Title: %s\n", Que[front].job_id, Que[front].job_title);
     }
 }
 
 void display(struct job Que[SIZE], int front, int rear) {
-    if (front == -1) {
-        printf("Queue is empty. Nothing to display.\n");
+    if (isEmpty(front, rear)) {
+        printf("Queue is empty.\n");
+        return;
     }
     else {
         printf("Queue contents:\n");
-        for (int i = front; i <= rear; i++) {
+        int i = (front + 1) % SIZE;
+        while (i != (rear + 1) % SIZE) {
             printf("Job ID: %d, Job Title: %s\n", Que[i].job_id, Que[i].job_title);
+            i = (i + 1) % SIZE;
         }
     }
 }
