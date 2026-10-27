@@ -10,6 +10,7 @@ struct Employee {
 void accept(struct Employee E[], int n);
 void display(struct Employee E[], int n);
 void bubblesorting(struct Employee E[], int n);
+void selectionsorting(struct Employee E[], int n);
 
 int main() {
     int n;
@@ -28,7 +29,12 @@ int main() {
 
     bubblesorting(emp, n);
 
-    printf("Sorted Employee List \n");
+    printf("Bubble Sorted Employee List \n");
+    display(emp, n);
+
+    selectionsorting(emp, n);
+
+    printf("Selection Sorted Employee List \n");
     display(emp, n);
 
     return 0;
@@ -63,6 +69,23 @@ void bubblesorting(struct Employee E[100], int n) {
                 E[j] = E[j+1];
                 E[j+1] = temp;
             }
+        }
+    }
+}
+
+void selectionsorting(struct Employee E[100], int n) {
+    struct Employee temp;
+    for(int i=0; i<n-1; i++) {
+        int min_index = i;
+        for(int j=i+1; j<n; j++) {
+            if(E[j].id < E[min_index].id) {
+                min_index = j;
+            }
+        }
+        if(min_index != i) {
+            temp = E[i];
+            E[i] = E[min_index];
+            E[min_index] = temp;
         }
     }
 }
